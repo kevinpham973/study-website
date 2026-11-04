@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A personal study library for Software Architecture: design patterns and cloud databases.">
+  <title>Software Architecture · Study Library</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="content.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#lesson">Skip to lesson</a>
+  <aside id="sidebar">
+    <a class="brand" href="#README.md"><span class="brand-icon">sa<span>↗</span></span><span>Software<br>Architecture<small>YOUR STUDY LIBRARY</small></span></a>
+    <label class="search-label" for="search">Find a topic or concept</label>
+    <div class="search-box"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Search your notes…" autocomplete="off"></div>
+    <p id="search-status" role="status"></p>
+    <nav id="navigation" aria-label="Study topics"></nav>
+    <div class="sidebar-footer">LEARN AT YOUR OWN PACE<br><span>One concept. One clear example.</span></div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar"><button id="menu" aria-expanded="false" aria-controls="sidebar">☰ Topics</button><span>THE SOFTWARE ARCHITECTURE NOTEBOOK</span><span class="edition">LECTURE NOTES / 2026</span></header>
+    <main>
+      <div class="lesson-meta"><span id="category"></span><span id="reading-time"></span></div>
+      <div class="page-tools"><span class="source-label">FROM YOUR STUDY NOTES</span><button id="complete" aria-pressed="false">○ Mark as read</button></div>
+      <article id="lesson" tabindex="-1"></article>
+      <nav class="lesson-pagination" aria-label="Lesson navigation"><a id="previous"></a><a id="next"></a></nav>
+      <footer class="page-footer">Software Architecture <span>Small steps, clearer understanding.</span></footer>
+    </main>
+  </div>
+  <noscript>This study reader requires JavaScript. You can also read the original Markdown files in VS Code.</noscript>
+</body>
+</html>
