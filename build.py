@@ -13,8 +13,15 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 markdown = mistune.create_markdown(escape=True, plugins=['table', 'strikethrough'])
 paths = [ROOT / 'README.md']
-for folder in ('Design Pattern', 'Cloud Database'):
-    paths += sorted(p for p in (ROOT / folder).rglob('*') if p.suffix in ('.md', '.py'))
+topics = sorted(folder for folder in ROOT.iterdir()
+                if folder.is_dir() and folder != HERE
+                and not folder.name.startswith('.') and (folder / 'README.md').is_file())
+for folder in topics:
+    paths += sorted((p for p in folder.rglob('*')
+                     if p.suffix in ('.md', '.py')
+                     and not any(part.startswith('.') or part == '__pycache__'
+                                 for part in p.relative_to(folder).parts)),
+                    key=lambda p: p.relative_to(ROOT).as_posix().replace('README.md', ''))
 known = {p.relative_to(ROOT).as_posix() for p in paths}
 pages = []
 for path in paths:
@@ -35,11 +42,11 @@ for path in paths:
 
     content = re.sub(r'href="([^"]+)"', link, content)
     group = 'Overview'
-    if key.startswith('Cloud Database/'):
-        group = 'Cloud Database'
-    elif key.startswith('Design Pattern/'):
-        parts = key.split('/')
-        group = parts[1] if len(parts) > 2 else 'Design Pattern'
+    parts = key.split('/')
+    if len(parts) > 1:
+        group = parts[0]
+        if parts[0] == 'Design Pattern' and len(parts) > 2:
+            group = parts[1]
     pages.append(dict(id=key, title=title, group=group, code=path.suffix == '.py', html=content, text=source))
-(HERE / 'dist' / 'content.js').write_text('window.STUDY_PAGES = ' + json.dumps(pages, ensure_ascii=True).replace('</', '<\\/') + ';\n', encoding='utf-8')
+(HERE / 'dist' / 'content.js').write_text('window.STUDY_PAGES = ' + json.dumps(pages, ensure_ascii=True, indent=2).replace('</', '<\\/') + ';\n', encoding='utf-8')
 print(f'Built {len(pages)} pages from Markdown notes and Python examples.')

@@ -5,7 +5,10 @@
   const input = document.querySelector('#search');
   const lesson = document.querySelector('#lesson');
   const complete = document.querySelector('#complete');
-  const groups = ['Overview', 'Design Pattern', '1. creational', '2. structural', '3. behavioral', 'Cloud Database'];
+  const topicOf = page => page.id.includes('/') ? page.id.split('/')[0] : 'Overview';
+  const topics = [...new Set(pages.map(topicOf))];
+  let expanded = {};
+  try { expanded = JSON.parse(localStorage.getItem('architecture-expanded') || '{}') || {}; } catch {}
   let read = new Set();
   try { read = new Set(JSON.parse(localStorage.getItem('architecture-read') || '[]')); } catch {}
   let current;
@@ -49,21 +52,46 @@
       } else anchor.removeAttribute('href');
     });
     document.body.classList.remove('menu-open'); document.querySelector('#menu').setAttribute('aria-expanded', 'false');
+    expanded[current.group] = true;
+    expanded[topicOf(current)] = true;
     renderNav(); window.scrollTo(0, 0);
   }
   function renderNav() {
     const query = input.value.trim().toLowerCase(); nav.replaceChildren(); let found = 0;
-    for (const group of groups) {
-      const matches = pages.filter(page => page.group === group && (!query || `${page.title} ${page.text}`.toLowerCase().includes(query)));
-      if (!matches.length) continue;
-      const heading = document.createElement('div'); heading.className = 'nav-group'; heading.textContent = group; nav.append(heading);
+    function createSection(group, count, parent, nested = false) {
+      const section = document.createElement('details'); section.className = 'nav-section';
+      if (nested) section.className += ' nav-subsection';
+      section.open = Boolean(query) || expanded[group] === true;
+      const heading = document.createElement('summary'); heading.className = 'nav-group';
+      const name = document.createElement('span'); name.textContent = group;
+      const badge = document.createElement('span'); badge.className = 'nav-count'; badge.textContent = String(count);
+      heading.append(name, badge); section.append(heading); parent.append(section);
+      section.addEventListener('toggle', () => {
+        if (query || !section.isConnected) return;
+        expanded[group] = section.open;
+        try { localStorage.setItem('architecture-expanded', JSON.stringify(expanded)); } catch {}
+      });
+      return section;
+    }
+    function appendLinks(matches, section) {
       for (const page of matches) {
         found++;
         const anchor = document.createElement('a'); anchor.href = '#' + encodeURI(page.id);
         anchor.className = 'nav-link' + (page.code ? ' code' : '') + (page.id === current?.id ? ' active' : '');
         if (page.id === current?.id) anchor.setAttribute('aria-current', 'page');
         if (read.has(page.id)) { const dot = document.createElement('span'); dot.className = 'read-dot'; dot.textContent = '✓'; anchor.append(dot); }
-        anchor.append(document.createTextNode(label(page))); nav.append(anchor);
+        anchor.append(document.createTextNode(label(page))); section.append(anchor);
+      }
+    }
+    for (const topic of topics) {
+      const matches = pages.filter(page => topicOf(page) === topic && (!query || `${page.title} ${page.text}`.toLowerCase().includes(query)));
+      if (!matches.length) continue;
+      const section = createSection(topic, matches.length, nav);
+      appendLinks(matches.filter(page => page.group === topic), section);
+      const subgroups = [...new Set(matches.filter(page => page.group !== topic).map(page => page.group))];
+      for (const group of subgroups) {
+        const children = matches.filter(page => page.group === group);
+        appendLinks(children, createSection(group, children.length, section, true));
       }
     }
     document.querySelector('#search-status').textContent = query ? `${found} matching pages` : '';
