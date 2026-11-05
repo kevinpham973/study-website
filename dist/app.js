@@ -63,7 +63,7 @@
       if (nested) section.className += ' nav-subsection';
       section.open = Boolean(query) || expanded[group] === true;
       const heading = document.createElement('summary'); heading.className = 'nav-group';
-      const name = document.createElement('span'); name.textContent = group;
+      const name = document.createElement('span'); name.textContent = group === 'c2_1_4_1_View_Model' ? 'c2.1 · 4+1 View Model' : group.replaceAll('_', ' ');
       const badge = document.createElement('span'); badge.className = 'nav-count'; badge.textContent = String(count);
       heading.append(name, badge); section.append(heading); parent.append(section);
       section.addEventListener('toggle', () => {

@@ -45,7 +45,7 @@ for path in paths:
     parts = key.split('/')
     if len(parts) > 1:
         group = parts[0]
-        if parts[0] == 'Design Pattern' and len(parts) > 2:
+        if parts[0] == 'c6_Design_Pattern' and len(parts) > 2:
             group = parts[1]
     pages.append(dict(id=key, title=title, group=group, code=path.suffix == '.py', html=content, text=source))
 (HERE / 'dist' / 'content.js').write_text('window.STUDY_PAGES = ' + json.dumps(pages, ensure_ascii=True, indent=2).replace('</', '<\\/') + ';\n', encoding='utf-8')

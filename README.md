@@ -25,7 +25,7 @@ Design Pattern is a top-level collapsible topic. Its Creational, Structural, and
 
 Upload **the contents of study-website/dist** to a static website host. Put index.html at the hosting root and keep app.js, styles.css, and content.js beside it. There is no server application or framework build required.
 
-You do not need a ZIP, the .openai directory, the Markdown sources, or the whole project just to host the generated website. The .openai/hosting.json file is metadata for the previous Sites deployment; other static hosts do not need it.
+You do not need a ZIP, the Markdown sources, or the whole project just to host the generated website. The previous Sites hosting metadata directories (.openai) have been removed; local use and other static hosts do not require them. Removing local metadata does not delete the previously hosted site.
 
 To move your editable study workspace to another computer, copy the **whole workspace**, including the original lecture Markdown files and study-website/build.py. Keep the generated dist folder too. Install mistune in the new Python environment if needed before rebuilding. You can omit .git directories, __pycache__, and old deployment archives.
 
